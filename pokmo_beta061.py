@@ -19,8 +19,15 @@ import pyautogui
 import time
 import win32api, win32con
 from tkinter import *
-import sys
-import os
+
+import kivy
+from kivy.app import App
+from kivy.uix.label import Label
+from kivy.uix.gridlayout import GridLayout
+from kivy.uix.textinput import TextInput
+from kivy.uix.button import Button
+from kivy.uix.widget import Widget
+from kivy.properties import ObjectProperty
 
 print(f"\n-imported libs")
 
@@ -41,13 +48,40 @@ print(f"\n-set vars")
 #win32api key values
 
 win_w = 0x57
-
 win_s = 0x53
 win_q = 0x51
 win_d = 0x44
 win_z = 0x5A
 
 print(f"\n-set key values")
+
+class MyGridLayout(Widget):
+
+    move1_input = ObjectProperty(None)
+    move2_input = ObjectProperty(None)
+    move3_input = ObjectProperty(None)
+    move4_input = ObjectProperty(None)
+
+    def update_pp(self):
+        global pp_dict
+
+        pp_dict[0] = self.move1_input.text
+        pp_dict[1] = self.move2_input.text
+        pp_dict[2] = self.move3_input.text
+        pp_dict[3] = self.move4_input.text
+
+        self.move1_input.text = pp_dict[0]
+        self.move2_input.text = pp_dict[1]
+        self.move3_input.text = pp_dict[2]
+        self.move4_input.text = pp_dict[3]
+
+        print(pp_dict)
+
+
+
+class MyApp(App):
+    def build(self):
+        return MyGridLayout()
 
 #start tk
 
@@ -60,20 +94,20 @@ print(f"\n-setup TK root")
 
 #pack moves function
 
-def gui_pack_moves():
-    global move1_but, move2_but, move3_but, move4_but
-    move1_but.grid_forget()
-    move2_but.grid_forget()
-    move3_but.grid_forget()
-    move4_but.grid_forget()
-    move1_but = Button(root, text=f"Update move 1 ({str(pp_dict.get(0))})", width=20, command=lambda: gui_set_pp(0))
-    move2_but = Button(root, text=f"Update move 2 ({str(pp_dict.get(1))})", width=20, command=lambda: gui_set_pp(1))
-    move3_but = Button(root, text=f"Update move 3 ({str(pp_dict.get(2))})", width=20, command=lambda: gui_set_pp(2))
-    move4_but = Button(root, text=f"Update move 4 ({str(pp_dict.get(3))})", width=20, command=lambda: gui_set_pp(3))
-    move1_but.grid(row=1, column=0)
-    move2_but.grid(row=1, column=1)
-    move3_but.grid(row=2, column=0)
-    move4_but.grid(row=2, column=1)
+# def gui_pack_moves():
+#     global move1_but, move2_but, move3_but, move4_but
+#     move1_but.grid_forget()
+#     move2_but.grid_forget()
+#     move3_but.grid_forget()
+#     move4_but.grid_forget()
+#     move1_but = Button(root, text=f"Update move 1 ({str(pp_dict.get(0))})", width=20, command=lambda: gui_set_pp(0))
+#     move2_but = Button(root, text=f"Update move 2 ({str(pp_dict.get(1))})", width=20, command=lambda: gui_set_pp(1))
+#     move3_but = Button(root, text=f"Update move 3 ({str(pp_dict.get(2))})", width=20, command=lambda: gui_set_pp(2))
+#     move4_but = Button(root, text=f"Update move 4 ({str(pp_dict.get(3))})", width=20, command=lambda: gui_set_pp(3))
+#     move1_but.grid(row=1, column=0)
+#     move2_but.grid(row=1, column=1)
+#     move3_but.grid(row=2, column=0)
+#     move4_but.grid(row=2, column=1)
 
 print(f"\n-setup gui move pack function")
 
@@ -88,13 +122,13 @@ print(f"\n-setup win32 api function")
 
 #gui get pp function
 
-def gui_set_pp(move):
-    try:
-        pp = int(pp_entry.get())
-        pp_dict[move] = int(pp)
-        gui_pack_moves()
-    except ValueError:
-        pass
+# def gui_set_pp(move):
+#     try:
+#         pp = int(pp_entry.get())
+#         pp_dict[move] = int(pp)
+#         gui_pack_moves()
+#     except ValueError:
+#         pass
 
 print(f"\n-setup get pp function")
 
@@ -224,25 +258,23 @@ print(f"\n-setup main function")
 
 #tk startup
 
-pp_entry = Entry(root, width=40)
-pp_entry.grid(row=0, column=0, columnspan=2)
+# pp_entry = Entry(root, width=40)
+# pp_entry.grid(row=0, column=0, columnspan=2)
 
-move1_but = Button(root, text=f"Update move 1 ({str(pp_dict.get(0))})", width=20, command=lambda: gui_set_pp(0))
-move2_but = Button(root, text=f"Update move 2 ({str(pp_dict.get(1))})", width=20, command=lambda: gui_set_pp(1))
-move3_but = Button(root, text=f"Update move 3 ({str(pp_dict.get(2))})", width=20, command=lambda: gui_set_pp(2))
-move4_but = Button(root, text=f"Update move 4 ({str(pp_dict.get(3))})", width=20, command=lambda: gui_set_pp(3))
+# move1_but = Button(root, text=f"Update move 1 ({str(pp_dict.get(0))})", width=20, command=lambda: gui_set_pp(0))
+# move2_but = Button(root, text=f"Update move 2 ({str(pp_dict.get(1))})", width=20, command=lambda: gui_set_pp(1))
+# move3_but = Button(root, text=f"Update move 3 ({str(pp_dict.get(2))})", width=20, command=lambda: gui_set_pp(2))
+# move4_but = Button(root, text=f"Update move 4 ({str(pp_dict.get(3))})", width=20, command=lambda: gui_set_pp(3))
 
-moves = [move1_but, move2_but, move3_but, move4_but]
+# moves = [move1_but, move2_but, move3_but, move4_but]
 
-start_but = Button(root, text="Start", command=main, width=40)
-start_but.grid_forget()
-start_but.grid(row=4, column=0, columnspan=2)
+# start_but = Button(root, text="Start", command=main, width=40)
+# start_but.grid_forget()
+# start_but.grid(row=4, column=0, columnspan=2)
 
-gui_pack_moves()
+# gui_pack_moves()
 
 if __name__ == '__main__':
-    root.mainloop()
+    MyApp().run()
 
 print(f"\n-starting TK")
-
-root.mainloop()

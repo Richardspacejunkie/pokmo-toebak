@@ -1,0 +1,49 @@
+<MyGridLayout>
+
+    move1_input:move1_input
+    move2_input:move2_input
+    move3_input:move3_input
+    move4_input:move4_input
+
+    GridLayout:
+        cols:1
+
+        size: root.width, root.height
+
+        Label:
+            text: "Pokmo-Toebak! beta v0.6.1"
+
+        GridLayout:
+            cols:2
+
+            Label:
+                text: "Enter move 1 PP"
+            TextInput:
+                id: move1_input
+                multiline: False
+                input_filter: "int"
+
+            Label:
+                text: "Enter move 2 PP"
+            TextInput:
+                id: move2_input
+                multiline: False
+                input_filter: "int"
+
+            Label:
+                text: "Enter move 3 PP"
+            TextInput:
+                id: move3_input
+                multiline: False
+                input_filter: "int"
+
+            Label:
+                text: "Enter move 4 PP"
+            TextInput:
+                id: move4_input
+                multiline: False
+                input_filter: "int"
+        
+        Button:
+            text: "Update PP"    
+            on_press: root.update_pp()

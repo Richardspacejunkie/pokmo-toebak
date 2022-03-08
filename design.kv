@@ -8,25 +8,22 @@
     GridLayout:
         cols:1
 
-        size: 320, 240
+        size: root.size
+
+        padding: 10
+        spacing: 5
 
         col_force_default: True
-        col_default_width: 320
+        col_default_width: 240
 
         row_force_default: True
-        row_default_height: 240
-
+        row_default_height: 80
+        
         Label:
             text: "Pokmo-Toebak! beta v0.6.1"
 
         GridLayout:
             cols:2
-
-            col_force_default: True
-            col_default_width: 160
-
-            row_force_default: True
-            row_default_height: 40
 
             Label:
                 text: "Enter move 1 PP"

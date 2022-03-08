@@ -22,12 +22,11 @@ from tkinter import *
 
 import kivy
 from kivy.app import App
-from kivy.uix.label import Label
-from kivy.uix.gridlayout import GridLayout
-from kivy.uix.textinput import TextInput
-from kivy.uix.button import Button
 from kivy.uix.widget import Widget
 from kivy.properties import ObjectProperty
+from kivy.lang import Builder
+
+Builder.load_file("design.kv")
 
 print(f"\n-imported libs")
 
@@ -79,7 +78,7 @@ class MyGridLayout(Widget):
 
 
 
-class MyApp(App):
+class PokmoApp(App):
     def build(self):
         return MyGridLayout()
 
@@ -275,6 +274,6 @@ print(f"\n-setup main function")
 # gui_pack_moves()
 
 if __name__ == '__main__':
-    MyApp().run()
+    PokmoApp().run()
 
 print(f"\n-starting TK")

@@ -25,7 +25,11 @@ from kivy.app import App
 from kivy.uix.widget import Widget
 from kivy.properties import ObjectProperty
 from kivy.lang import Builder
+from kivy.core.window import Window
+from kivy.config import Config
 
+Config.set('graphics', 'resizable', False)
+Config.write()
 Builder.load_file("design.kv")
 
 print(f"\n-imported libs")
@@ -80,6 +84,7 @@ class MyGridLayout(Widget):
 
 class PokmoApp(App):
     def build(self):
+        Window.size = (260, 270)
         return MyGridLayout()
 
 #start tk
@@ -142,34 +147,15 @@ def attack():
         selected_move += 1
     if selected_move > 3:
         print("out of pp")
-        start_but = Button(root, text="Program end. Click to restart", command=main, bg="orange", width="40")
-        start_but.grid_forget()
-        start_but.grid(row=4, column=0, columnspan=2)
-        root.update()
         selected_move = 0
-        mainloop()
+        main()
     if pp_dict.get(selected_move) - attack_times <= 0:
         print("no pp")
         attack_times = 0
         selected_move += 1
-        start_but = Button(root, text="no pp", command=main, bg="orange", width="40")
-        start_but.grid_forget()
-        start_but.grid(row=4, column=0, columnspan=2)
-        root.update()
     click_key(win_w)
     click_key(win_q)
     click_key(win_z)
-    if pp_dict.get(selected_move) == 0:
-        print("next move")
-        selected_move += 1
-    if selected_move > 3:
-        print("out of pp")
-        start_but = Button(root, text="Program end. Click to restart", command=main, bg="orange", width="40")
-        start_but.grid_forget()
-        start_but.grid(row=4, column=0, columnspan=2)
-        root.update()
-        selected_move = 0
-        mainloop()
     if selected_move == 0:
         print("attack move 1")
         click_key(win_w)
@@ -194,10 +180,6 @@ def attack():
         click_key(win_w)
         click_key(win_w)
         attack_times += 1
-    start_but = Button(root, text=f"{attack_times} times attacked", command=main, bg="blue", width="40")
-    start_but.grid_forget()
-    start_but.grid(row=4, column=0, columnspan=2)
-    root.update()
     time.sleep(3)
 
 print(f"\n-setup attack function")

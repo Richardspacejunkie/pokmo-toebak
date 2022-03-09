@@ -18,6 +18,7 @@ print(debug_console_message)
 import pyautogui
 import time
 import win32api, win32con
+from threading import Thread
 
 import kivy
 from kivy.app import App
@@ -46,6 +47,7 @@ class MyGridLayout(Widget):
     
     #vars
 
+    active_thread = False
     screen_x, screen_y = pyautogui.size()
     selected_move = 0
     attack_times = 0
@@ -57,123 +59,127 @@ class MyGridLayout(Widget):
     }
 
     print(f"\n-set vars")
+    class Script(Thread):
 
-    #win32api key values
+        #win32api key values
 
-    win_w = 0x57
-    win_s = 0x53
-    win_q = 0x51
-    win_d = 0x44
-    win_z = 0x5A
+        win_w = 0x57
+        win_s = 0x53
+        win_q = 0x51
+        win_d = 0x44
+        win_z = 0x5A
 
-    print(f"\n-set key values")
-    
-    #win api key click function
+        print(f"\n-set key values")
+        
+        #win api key click function
 
-    def click_key(self, x):
-        win32api.keybd_event(x,0,0,0)
-        starttime = time.time()
-        while time.time() - starttime < 0.3:
-            print("waiting")
-        win32api.keybd_event(x,0,win32con.KEYEVENTF_KEYUP,0)
+        def click_key(self, x):
+            win32api.keybd_event(x,0,0,0)
+            time.sleep(0.1)
+            win32api.keybd_event(x,0,win32con.KEYEVENTF_KEYUP,0)
 
-    print(f"\n-setup win32 api function")
+        print(f"\n-setup win32 api function")
 
-    def selected_move_update(self):
-        if self.pp_dict[0] and self.pp_dict[1] and self.pp_dict[2] and self.pp_dict[3] == 0:
-            return "no pp"
-        for i in self.pp_dict:
-            if self.pp_dict[i] == 0:
-                print("selecting next move")
-                self.selected_move = i+1
-        if self.selected_move > 3:
-            self.selected_move = 0
+        def selected_move_update(self):
+            if MyGridLayout.pp_dict[0] and MyGridLayout.pp_dict[1] and MyGridLayout.pp_dict[2] and MyGridLayout.pp_dict[3] == 0:
+                return "no pp"
+            for i in MyGridLayout.pp_dict:
+                if MyGridLayout.pp_dict[i] == 0:
+                    print("selecting next move")
+                    self.selected_move = i+1
+            if MyGridLayout.pp_dict[self.selected_move] < MyGridLayout.attack_times:
+                MyGridLayout.pp_dict[self.selected_move] = 0
+            if self.selected_move > 3:
+                self.selected_move = 0
 
-    #attack function
+        #attack function
 
-    def attack(self):
-        self.click_key(self.win_w)
-        self.click_key(self.win_q)
-        self.click_key(self.win_z)
-        if self.selected_move == 0:
-            print("attack move 1")
+        def attack(self):
             self.click_key(self.win_w)
-            self.click_key(self.win_w)
-            self.attack_times += 1
-        elif self.selected_move == 1:
-            print("attack move 2")
+            self.click_key(self.win_q)
+            self.click_key(self.win_z)
+            if self.selected_move == 0:
+                print("attack move 1")
+                self.click_key(self.win_w)
+                self.click_key(self.win_w)
+                MyGridLayout.attack_times += 1
+            elif self.selected_move == 1:
+                print("attack move 2")
+                self.click_key(self.win_d)
+                self.click_key(self.win_w)
+                self.click_key(self.win_w)
+                MyGridLayout.attack_times += 1
+            elif self.selected_move == 2:
+                print("attack move 3")
+                self.click_key(self.win_s)
+                self.click_key(self.win_w)
+                self.click_key(self.win_w)
+                MyGridLayout.attack_times += 1
+            elif self.selected_move == 3:
+                print("attack move 4")
+                self.click_key(self.win_s)
+                self.click_key(self.win_d)
+                self.click_key(self.win_w)
+                self.click_key(self.win_w)
+                MyGridLayout.attack_times += 1
+            time.sleep(4)
+
+        print(f"\n-setup attack function")
+
+        #move function
+
+        def move(self):
+            self.click_key(self.win_q)
+            self.click_key(self.win_q)
+            self.click_key(self.win_q)
             self.click_key(self.win_d)
-            self.click_key(self.win_w)
-            self.click_key(self.win_w)
-            self.attack_times += 1
-        elif self.selected_move == 2:
-            print("attack move 3")
-            self.click_key(self.win_s)
-            self.click_key(self.win_w)
-            self.click_key(self.win_w)
-            self.attack_times += 1
-        elif self.selected_move == 3:
-            print("attack move 4")
-            self.click_key(self.win_s)
             self.click_key(self.win_d)
-            self.click_key(self.win_w)
-            self.click_key(self.win_w)
-            self.attack_times += 1
+            self.click_key(self.win_d)
 
-    print(f"\n-setup attack function")
+        print(f"\n-setup move function")
 
-    #move function
 
-    def move(self):
-        self.click_key(self.win_q)
-        self.click_key(self.win_q)
-        self.click_key(self.win_q)
-        self.click_key(self.win_d)
-        self.click_key(self.win_d)
-        self.click_key(self.win_d)
+        #main function
 
-    print(f"\n-setup move function")
+        def run(self):
+            time.sleep(5)
+            print("running main")
+            pyautogui.FAILSAFE = True
+            scan_x = int(0.26 * MyGridLayout.screen_x)
+            scan_y = int(0.27 * MyGridLayout.screen_y)
+            print("entered loop")
+            while True:
+                R,G,B = pyautogui.pixel(scan_x, scan_y)
+                if R == 0 and G == 0 and B == 0:
+                    print("combat mode")
+                    if pyautogui.locateOnScreen("fight.PNG", confidence=(0.8)) != None:
+                        self.selected_move_update()
+                        if self.selected_move_update() == "no pp":
+                            break
+                        print("attack")
+                        self.attack()
+                else:
+                    print("move")
+                    self.move()
+            print("stopping")
+            MyGridLayout.active_thread = False
+
+        print(f"\n-setup main function")
 
     #start function
 
     def start(self):
-        self.selected_move = 0
-        self.attack_times = 0
-        print("starting countdown")
-        self.ids.start_button.background_color = 0, 1, 0, 1
-        self.ids.start_button.text = "Starting"
-        self.main()
-
-    #main function
-
-    def main(self):
-        print("running main")
-        pyautogui.FAILSAFE = True
-        scan_x = int(0.26 * self.screen_x)
-        scan_y = int(0.27 * self.screen_y)
-        print("entered loop")
-        while True:
-            self.ids.start_button.background_color = 1, 1, 1, 1
-            self.ids.start_button.text = "Running...(click to stop)"
-            R,G,B = pyautogui.pixel(scan_x, scan_y)
-            if R == 0 and G == 0 and B == 0:
-                self.ids.start_button.background_color = 0.5, 0, 0, 1
-                self.ids.start_button.text = "Fighting"
-                self.selected_move_update()
-                if self.selected_move_update() == "no pp":
-                    break
-                print("combat mode")
-                if pyautogui.locateOnScreen("fight.PNG", confidence=(0.8)) != None:
-                    print("attack")
-                    self.attack()
-            else:
-                print("move")
-                self.move()
-        print("stopping")
-        self.ids.start_button.background_color = 1, 1, 1, 1
-        self.ids.start_button.text = "Start"
-
-    print(f"\n-setup main function")
+        if self.active_thread:
+            print("Thread already active")
+        else:
+            self.active_thread = True
+            self.selected_move = 0
+            self.attack_times = 0
+            print("starting countdown")
+            self.ids.start_button.background_color = 0, 1, 0, 1
+            self.ids.start_button.text = "Running ..."
+            poke_script = self.Script()
+            poke_script.start()
 
     #object values
 

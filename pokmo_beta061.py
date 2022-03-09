@@ -18,11 +18,11 @@ print(debug_console_message)
 import pyautogui
 import time
 import win32api, win32con
-import psutil
 
 import kivy
 from kivy.app import App
 from kivy.uix.widget import Widget
+from kivy.clock import Clock
 from kivy.properties import ObjectProperty
 from kivy.properties import StringProperty
 from kivy.properties import DictProperty
@@ -40,34 +40,142 @@ Builder.load_file("design.kv")
 
 print(f"\n-configured kivy")
 
-#vars
-
-screen_x, screen_y = pyautogui.size()
-selected_move = 0
-attack_times = 0
-pp_dict = {
-    0: "",
-    1: "",
-    2: "",
-    3: ""
-}
-
-print(f"\n-set vars")
-
-#win32api key values
-
-win_w = 0x57
-win_s = 0x53
-win_q = 0x51
-win_d = 0x44
-win_z = 0x5A
-
-print(f"\n-set key values")
-
-#setting up grid layout
+#setting up grid layout class
 
 class MyGridLayout(Widget):
-    global pp_dict
+    
+    #vars
+
+    screen_x, screen_y = pyautogui.size()
+    selected_move = 0
+    attack_times = 0
+    pp_dict = {
+        0: 0,
+        1: 0,
+        2: 0,
+        3: 0
+    }
+
+    print(f"\n-set vars")
+
+    #win32api key values
+
+    win_w = 0x57
+    win_s = 0x53
+    win_q = 0x51
+    win_d = 0x44
+    win_z = 0x5A
+
+    print(f"\n-set key values")
+    
+    #win api key click function
+
+    def click_key(self, x):
+        win32api.keybd_event(x,0,0,0)
+        starttime = time.time()
+        while time.time() - starttime < 0.3:
+            print("waiting")
+        win32api.keybd_event(x,0,win32con.KEYEVENTF_KEYUP,0)
+
+    print(f"\n-setup win32 api function")
+
+    def selected_move_update(self):
+        if self.pp_dict[0] and self.pp_dict[1] and self.pp_dict[2] and self.pp_dict[3] == 0:
+            return "no pp"
+        for i in self.pp_dict:
+            if self.pp_dict[i] == 0:
+                print("selecting next move")
+                self.selected_move = i+1
+        if self.selected_move > 3:
+            self.selected_move = 0
+
+    #attack function
+
+    def attack(self):
+        self.click_key(self.win_w)
+        self.click_key(self.win_q)
+        self.click_key(self.win_z)
+        if self.selected_move == 0:
+            print("attack move 1")
+            self.click_key(self.win_w)
+            self.click_key(self.win_w)
+            self.attack_times += 1
+        elif self.selected_move == 1:
+            print("attack move 2")
+            self.click_key(self.win_d)
+            self.click_key(self.win_w)
+            self.click_key(self.win_w)
+            self.attack_times += 1
+        elif self.selected_move == 2:
+            print("attack move 3")
+            self.click_key(self.win_s)
+            self.click_key(self.win_w)
+            self.click_key(self.win_w)
+            self.attack_times += 1
+        elif self.selected_move == 3:
+            print("attack move 4")
+            self.click_key(self.win_s)
+            self.click_key(self.win_d)
+            self.click_key(self.win_w)
+            self.click_key(self.win_w)
+            self.attack_times += 1
+
+    print(f"\n-setup attack function")
+
+    #move function
+
+    def move(self):
+        self.click_key(self.win_q)
+        self.click_key(self.win_q)
+        self.click_key(self.win_q)
+        self.click_key(self.win_d)
+        self.click_key(self.win_d)
+        self.click_key(self.win_d)
+
+    print(f"\n-setup move function")
+
+    #start function
+
+    def start(self):
+        self.selected_move = 0
+        self.attack_times = 0
+        print("starting countdown")
+        self.ids.start_button.background_color = 0, 1, 0, 1
+        self.ids.start_button.text = "Starting"
+        self.main()
+
+    #main function
+
+    def main(self):
+        print("running main")
+        pyautogui.FAILSAFE = True
+        scan_x = int(0.26 * self.screen_x)
+        scan_y = int(0.27 * self.screen_y)
+        print("entered loop")
+        while True:
+            self.ids.start_button.background_color = 1, 1, 1, 1
+            self.ids.start_button.text = "Running...(click to stop)"
+            R,G,B = pyautogui.pixel(scan_x, scan_y)
+            if R == 0 and G == 0 and B == 0:
+                self.ids.start_button.background_color = 0.5, 0, 0, 1
+                self.ids.start_button.text = "Fighting"
+                self.selected_move_update()
+                if self.selected_move_update() == "no pp":
+                    break
+                print("combat mode")
+                if pyautogui.locateOnScreen("fight.PNG", confidence=(0.8)) != None:
+                    print("attack")
+                    self.attack()
+            else:
+                print("move")
+                self.move()
+        print("stopping")
+        self.ids.start_button.background_color = 1, 1, 1, 1
+        self.ids.start_button.text = "Start"
+
+    print(f"\n-setup main function")
+
+    #object values
 
     move_pp = DictProperty(pp_dict)
 
@@ -76,26 +184,37 @@ class MyGridLayout(Widget):
     move3_value = ObjectProperty(None)
     move4_value = ObjectProperty(None)
 
+    print(f"\n-set object values")
 
     def update(self):
-        global pp_dict
+        if self.move1_value.text == "":
+            self.pp_dict[0] = 0
+        else:
+            self.pp_dict[0] = int(self.move1_value.text)
+        if self.move2_value.text == "":
+            self.pp_dict[1] = 0
+        else:
+            self.pp_dict[1] = int(self.move2_value.text)
+        if self.move3_value.text == "":
+            self.pp_dict[2] = 0
+        else:
+            self.pp_dict[2] = int(self.move3_value.text)
+        if self.move4_value.text == "":
+            self.pp_dict[3] = 0
+        else:
+            self.pp_dict[3] = int(self.move4_value.text)
 
-        pp_dict[0] = self.move1_value.text
-        pp_dict[1] = self.move2_value.text
-        pp_dict[2] = self.move3_value.text
-        pp_dict[3] = self.move4_value.text
+        self.move1_value.text = str(self.pp_dict[0])
+        self.move2_value.text = str(self.pp_dict[1])
+        self.move3_value.text = str(self.pp_dict[2])
+        self.move4_value.text = str(self.pp_dict[3])
 
-        self.move1_value.text = pp_dict[0]
-        self.move2_value.text = pp_dict[1]
-        self.move3_value.text = pp_dict[2]
-        self.move4_value.text = pp_dict[3]
+        self.move_pp[0] = str(self.pp_dict[0])
+        self.move_pp[1] = str(self.pp_dict[1])
+        self.move_pp[2] = str(self.pp_dict[2])
+        self.move_pp[3] = str(self.pp_dict[3])
 
-        self.move_pp[0] = pp_dict[0]
-        self.move_pp[1] = pp_dict[1]
-        self.move_pp[2] = pp_dict[2]
-        self.move_pp[3] = pp_dict[3]
-
-        print(pp_dict)
+        print(self.pp_dict)
 
 print(f"\n-setup grid layout")
 
@@ -107,103 +226,6 @@ class PokmoApp(App):
         return MyGridLayout()
 
 print(f"\n-declared kivy app")
-
-#win api key click function
-
-def click_key(x):
-    win32api.keybd_event(x,0,0,0)
-    time.sleep(0.1)
-    win32api.keybd_event(x,0,win32con.KEYEVENTF_KEYUP,0)
-
-print(f"\n-setup win32 api function")
-
-print(f"\n-setup get pp function")
-
-#attack function
-
-def attack():
-    global selected_move
-    global attack_times
-    global pp_dict
-    if pp_dict.get(selected_move) == 0:
-        print("next move")
-        selected_move += 1
-    if selected_move > 3:
-        print("out of pp")
-        selected_move = 0
-        main()
-    if pp_dict.get(selected_move) - attack_times <= 0:
-        print("no pp")
-        attack_times = 0
-        selected_move += 1
-    click_key(win_w)
-    click_key(win_q)
-    click_key(win_z)
-    if selected_move == 0:
-        print("attack move 1")
-        click_key(win_w)
-        click_key(win_w)
-        attack_times += 1
-    elif selected_move == 1:
-        print("attack move 2")
-        click_key(win_d)
-        click_key(win_w)
-        click_key(win_w)
-        attack_times += 1
-    elif selected_move == 2:
-        print("attack move 3")
-        click_key(win_s)
-        click_key(win_w)
-        click_key(win_w)
-        attack_times += 1
-    elif selected_move == 3:
-        print("attack move 4")
-        click_key(win_s)
-        click_key(win_d)
-        click_key(win_w)
-        click_key(win_w)
-        attack_times += 1
-    time.sleep(3)
-
-print(f"\n-setup attack function")
-
-#move function
-
-def move():
-    click_key(win_q)
-    click_key(win_q)
-    click_key(win_q)
-    click_key(win_d)
-    click_key(win_d)
-    click_key(win_d)
-
-print(f"\n-setup move function")
-
-#main function
-
-def main():
-    global screen_x
-    global screen_y
-    print("starting countdown")
-    for i in range(0,6):
-        time.sleep(5-i)
-    pyautogui.FAILSAFE = True
-    scan_x = int(0.26 * screen_x)
-    scan_y = int(0.27 * screen_y)
-    print("entered loop")
-    while True:
-        R,G,B = pyautogui.pixel(scan_x, scan_y)
-        if R == 0 and G == 0 and B == 0:
-            print("combat mode")
-            if pyautogui.locateOnScreen("fight.PNG", confidence=(0.8)) != None:
-                print("attack")
-                time.sleep(0.2)
-                attack()
-        else:
-            print("move")
-            move()
-
-print(f"\n-setup main function")
 
 if __name__ == '__main__':
     PokmoApp().run()

@@ -18,21 +18,27 @@ print(debug_console_message)
 import pyautogui
 import time
 import win32api, win32con
-from tkinter import *
+import psutil
 
 import kivy
 from kivy.app import App
 from kivy.uix.widget import Widget
 from kivy.properties import ObjectProperty
+from kivy.properties import StringProperty
+from kivy.properties import DictProperty
 from kivy.lang import Builder
 from kivy.core.window import Window
 from kivy.config import Config
+
+print(f"\n-imported libs")
+
+#configuring kivy
 
 Config.set('graphics', 'resizable', False)
 Config.write()
 Builder.load_file("design.kv")
 
-print(f"\n-imported libs")
+print(f"\n-configured kivy")
 
 #vars
 
@@ -40,10 +46,10 @@ screen_x, screen_y = pyautogui.size()
 selected_move = 0
 attack_times = 0
 pp_dict = {
-    0: 0,
-    1: 0,
-    2: 0,
-    3: 0
+    0: "",
+    1: "",
+    2: "",
+    3: ""
 }
 
 print(f"\n-set vars")
@@ -58,62 +64,49 @@ win_z = 0x5A
 
 print(f"\n-set key values")
 
+#setting up grid layout
+
 class MyGridLayout(Widget):
+    global pp_dict
 
-    move1_input = ObjectProperty(None)
-    move2_input = ObjectProperty(None)
-    move3_input = ObjectProperty(None)
-    move4_input = ObjectProperty(None)
+    move_pp = DictProperty(pp_dict)
 
-    def update_pp(self):
+    move1_value = ObjectProperty(None)
+    move2_value = ObjectProperty(None)
+    move3_value = ObjectProperty(None)
+    move4_value = ObjectProperty(None)
+
+
+    def update(self):
         global pp_dict
 
-        pp_dict[0] = self.move1_input.text
-        pp_dict[1] = self.move2_input.text
-        pp_dict[2] = self.move3_input.text
-        pp_dict[3] = self.move4_input.text
+        pp_dict[0] = self.move1_value.text
+        pp_dict[1] = self.move2_value.text
+        pp_dict[2] = self.move3_value.text
+        pp_dict[3] = self.move4_value.text
 
-        self.move1_input.text = pp_dict[0]
-        self.move2_input.text = pp_dict[1]
-        self.move3_input.text = pp_dict[2]
-        self.move4_input.text = pp_dict[3]
+        self.move1_value.text = pp_dict[0]
+        self.move2_value.text = pp_dict[1]
+        self.move3_value.text = pp_dict[2]
+        self.move4_value.text = pp_dict[3]
+
+        self.move_pp[0] = pp_dict[0]
+        self.move_pp[1] = pp_dict[1]
+        self.move_pp[2] = pp_dict[2]
+        self.move_pp[3] = pp_dict[3]
 
         print(pp_dict)
 
+print(f"\n-setup grid layout")
 
+#declaring kivy app
 
 class PokmoApp(App):
     def build(self):
-        Window.size = (260, 270)
+        Window.size = (260, 330)
         return MyGridLayout()
 
-#start tk
-
-root = Tk()
-icon_img = PhotoImage(file="icon_logo.png")
-root.title("Pokmo beta v0.4.1")
-root.iconphoto(False, icon_img)
-
-print(f"\n-setup TK root")
-
-#pack moves function
-
-# def gui_pack_moves():
-#     global move1_but, move2_but, move3_but, move4_but
-#     move1_but.grid_forget()
-#     move2_but.grid_forget()
-#     move3_but.grid_forget()
-#     move4_but.grid_forget()
-#     move1_but = Button(root, text=f"Update move 1 ({str(pp_dict.get(0))})", width=20, command=lambda: gui_set_pp(0))
-#     move2_but = Button(root, text=f"Update move 2 ({str(pp_dict.get(1))})", width=20, command=lambda: gui_set_pp(1))
-#     move3_but = Button(root, text=f"Update move 3 ({str(pp_dict.get(2))})", width=20, command=lambda: gui_set_pp(2))
-#     move4_but = Button(root, text=f"Update move 4 ({str(pp_dict.get(3))})", width=20, command=lambda: gui_set_pp(3))
-#     move1_but.grid(row=1, column=0)
-#     move2_but.grid(row=1, column=1)
-#     move3_but.grid(row=2, column=0)
-#     move4_but.grid(row=2, column=1)
-
-print(f"\n-setup gui move pack function")
+print(f"\n-declared kivy app")
 
 #win api key click function
 
@@ -123,16 +116,6 @@ def click_key(x):
     win32api.keybd_event(x,0,win32con.KEYEVENTF_KEYUP,0)
 
 print(f"\n-setup win32 api function")
-
-#gui get pp function
-
-# def gui_set_pp(move):
-#     try:
-#         pp = int(pp_entry.get())
-#         pp_dict[move] = int(pp)
-#         gui_pack_moves()
-#     except ValueError:
-#         pass
 
 print(f"\n-setup get pp function")
 
@@ -187,10 +170,6 @@ print(f"\n-setup attack function")
 #move function
 
 def move():
-    start_but = Button(root, text="moving", command=main, bg="yellow", width="40")
-    start_but.grid_forget()
-    start_but.grid(row=4, column=0, columnspan=2)
-    root.update()
     click_key(win_q)
     click_key(win_q)
     click_key(win_q)
@@ -207,23 +186,12 @@ def main():
     global screen_y
     print("starting countdown")
     for i in range(0,6):
-        start_but = Button(root, text=f"Start({i})", command=main, width="40")
-        start_but.grid_forget()
-        start_but.grid(row=4, column=0, columnspan=2)
-        root.update()
-        time.sleep(1)
+        time.sleep(5-i)
     pyautogui.FAILSAFE = True
     scan_x = int(0.26 * screen_x)
     scan_y = int(0.27 * screen_y)
-    start_but = Button(root, text=f"Start({i})", command=main, bg="green", width="40")
-    start_but.grid_forget()
-    start_but.grid(row=4, column=0, columnspan=2)
     print("entered loop")
     while True:
-        start_but = Button(root, text="Idle... (click to stop)", command=mainloop, bg="white", width="40")
-        start_but.grid_forget()
-        start_but.grid(row=4, column=0, columnspan=2)
-        root.update()
         R,G,B = pyautogui.pixel(scan_x, scan_y)
         if R == 0 and G == 0 and B == 0:
             print("combat mode")
@@ -237,25 +205,7 @@ def main():
 
 print(f"\n-setup main function")
 
-#tk startup
-
-# pp_entry = Entry(root, width=40)
-# pp_entry.grid(row=0, column=0, columnspan=2)
-
-# move1_but = Button(root, text=f"Update move 1 ({str(pp_dict.get(0))})", width=20, command=lambda: gui_set_pp(0))
-# move2_but = Button(root, text=f"Update move 2 ({str(pp_dict.get(1))})", width=20, command=lambda: gui_set_pp(1))
-# move3_but = Button(root, text=f"Update move 3 ({str(pp_dict.get(2))})", width=20, command=lambda: gui_set_pp(2))
-# move4_but = Button(root, text=f"Update move 4 ({str(pp_dict.get(3))})", width=20, command=lambda: gui_set_pp(3))
-
-# moves = [move1_but, move2_but, move3_but, move4_but]
-
-# start_but = Button(root, text="Start", command=main, width=40)
-# start_but.grid_forget()
-# start_but.grid(row=4, column=0, columnspan=2)
-
-# gui_pack_moves()
-
 if __name__ == '__main__':
     PokmoApp().run()
 
-print(f"\n-starting TK")
+# print("PokeMMO.exe" in (i.name() for i in psutil.process_iter()))

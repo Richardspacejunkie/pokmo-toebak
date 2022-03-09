@@ -1,9 +1,9 @@
 <MyGridLayout>
 
-    move1_input:move1_input
-    move2_input:move2_input
-    move3_input:move3_input
-    move4_input:move4_input
+    move1_value:move1_input
+    move2_value:move2_input
+    move3_value:move3_input
+    move4_value:move4_input
 
     GridLayout:
         cols:1
@@ -17,42 +17,92 @@
         col_default_width: 240
 
         row_force_default: True
-        row_default_height: 80
+        row_default_height: 100
         
-        Label:
-            text: "Pokmo-Toebak! beta v0.6.1"
+        GridLayout:
+            cols: 1
+            spacing: 5
+
+            Label:
+                text: "Pokmo-Toebak! beta v0.6.1"
+                font_size: 20
 
         GridLayout:
-            cols:2
-
+            cols:3
             Label:
-                text: "Enter move 1 PP"
+                text: "Enter move 1 PP    "
+                size_hint_x: None
+                width: 130
             TextInput:
                 id: move1_input
+                font_size: 10
                 multiline: False
                 input_filter: "int"
+                size_hint_x: None
+                width: 50
+            Label:
+                text: str(root.move_pp[0])
+                width: 40
+
 
             Label:
-                text: "Enter move 2 PP"
+                text: "Enter move 2 PP    "
+                size_hint_x: None
+                width: 130
             TextInput:
                 id: move2_input
+                font_size: 10
                 multiline: False
                 input_filter: "int"
+                size_hint_x: None
+                width: 50
+            Label:
+                text: str(root.move_pp[1])
+                width: 40
+
 
             Label:
-                text: "Enter move 3 PP"
+                text: "Enter move 3 PP    "
+                size_hint_x: None
+                width: 130
             TextInput:
                 id: move3_input
+                font_size: 10
                 multiline: False
                 input_filter: "int"
+                size_hint_x: None
+                width: 50
+            Label:
+                text: str(root.move_pp[2])
+                width: 40
+
 
             Label:
-                text: "Enter move 4 PP"
+                text: "Enter move 4 PP    "
+                size_hint_x: None
+                width: 130
             TextInput:
                 id: move4_input
+                font_size: 10
                 multiline: False
                 input_filter: "int"
-        
-        Button:
-            text: "Update PP"    
-            on_press: root.update_pp()
+                size_hint_x: None
+                width: 50
+            Label:
+                text: str(root.move_pp[3])
+                width: 40
+
+        GridLayout:
+
+            cols: 1
+            spacing: 4
+
+            Button:
+                text: "Update Info"    
+                on_press: root.update()
+                size_hint_y: None
+                height: 48
+            Button:
+                text: "Start"    
+                size_hint_y: None
+                height: 48

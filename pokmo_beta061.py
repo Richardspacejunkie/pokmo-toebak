@@ -81,16 +81,21 @@ class MyGridLayout(Widget):
         print(f"\n-setup win32 api function")
 
         def selected_move_update(self):
-            if MyGridLayout.pp_dict[0] and MyGridLayout.pp_dict[1] and MyGridLayout.pp_dict[2] and MyGridLayout.pp_dict[3] == 0:
+            print(MyGridLayout.pp_dict)
+            if MyGridLayout.pp_dict[MyGridLayout.selected_move] - MyGridLayout.attack_times == 0:
+                MyGridLayout.attack_times = 0
+                MyGridLayout.pp_dict[MyGridLayout.selected_move] = 0
+            if MyGridLayout.selected_move > 3:
+                print("out of range moves")
+                MyGridLayout.selected_move = 0
+            if MyGridLayout.pp_dict[0] == 0 and MyGridLayout.pp_dict[1] == 0 and MyGridLayout.pp_dict[2] == 0 and MyGridLayout.pp_dict[3] == 0:
+                print("no pp")
                 return "no pp"
-            for i in MyGridLayout.pp_dict:
-                if MyGridLayout.pp_dict[i] == 0:
-                    print("selecting next move")
-                    self.selected_move = i+1
-            if MyGridLayout.pp_dict[self.selected_move] < MyGridLayout.attack_times:
-                MyGridLayout.pp_dict[self.selected_move] = 0
-            if self.selected_move > 3:
-                self.selected_move = 0
+            if MyGridLayout.pp_dict[MyGridLayout.selected_move] == 0:
+                print("empty selecting next move")
+                MyGridLayout.selected_move += 1
+            if MyGridLayout.selected_move > 3:
+                MyGridLayout.selected_move = 0
 
         #attack function
 
@@ -98,31 +103,31 @@ class MyGridLayout(Widget):
             self.click_key(self.win_w)
             self.click_key(self.win_q)
             self.click_key(self.win_z)
-            if self.selected_move == 0:
+            if MyGridLayout.selected_move == 0:
                 print("attack move 1")
                 self.click_key(self.win_w)
                 self.click_key(self.win_w)
                 MyGridLayout.attack_times += 1
-            elif self.selected_move == 1:
+            elif MyGridLayout.selected_move == 1:
                 print("attack move 2")
                 self.click_key(self.win_d)
                 self.click_key(self.win_w)
                 self.click_key(self.win_w)
                 MyGridLayout.attack_times += 1
-            elif self.selected_move == 2:
+            elif MyGridLayout.selected_move == 2:
                 print("attack move 3")
                 self.click_key(self.win_s)
                 self.click_key(self.win_w)
                 self.click_key(self.win_w)
                 MyGridLayout.attack_times += 1
-            elif self.selected_move == 3:
+            elif MyGridLayout.selected_move == 3:
                 print("attack move 4")
                 self.click_key(self.win_s)
                 self.click_key(self.win_d)
                 self.click_key(self.win_w)
                 self.click_key(self.win_w)
                 MyGridLayout.attack_times += 1
-            time.sleep(4)
+            time.sleep(3.5)
 
         print(f"\n-setup attack function")
 
@@ -148,14 +153,15 @@ class MyGridLayout(Widget):
             scan_x = int(0.26 * MyGridLayout.screen_x)
             scan_y = int(0.27 * MyGridLayout.screen_y)
             print("entered loop")
-            while True:
+            looping = True
+            while looping:
                 R,G,B = pyautogui.pixel(scan_x, scan_y)
-                if R == 0 and G == 0 and B == 0:
+                if self.selected_move_update() == "no pp":
+                    looping = False
+                elif R == 0 and G == 0 and B == 0:
                     print("combat mode")
                     if pyautogui.locateOnScreen("fight.PNG", confidence=(0.8)) != None:
                         self.selected_move_update()
-                        if self.selected_move_update() == "no pp":
-                            break
                         print("attack")
                         self.attack()
                 else:
@@ -170,14 +176,16 @@ class MyGridLayout(Widget):
 
     def start(self):
         if self.active_thread:
-            print("Thread already active")
+            print("Thread already running")
+            print("Stoping thread")
+            #future thread kill code
         else:
             self.active_thread = True
             self.selected_move = 0
             self.attack_times = 0
             print("starting countdown")
             self.ids.start_button.background_color = 0, 1, 0, 1
-            self.ids.start_button.text = "Running ..."
+            self.ids.start_button.text = "Running ... (click to stop)"
             poke_script = self.Script()
             poke_script.start()
 

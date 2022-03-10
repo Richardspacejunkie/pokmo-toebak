@@ -1,4 +1,4 @@
-#!c:\users\ritse\onedrive\documenten\pokmo_toebak\.venv\scripts\python.exe
+#!d:\pokemmo-bot\.venv\scripts\python.exe
 # EASY-INSTALL-ENTRY-SCRIPT: 'future==0.18.2','console_scripts','pasteurize'
 import re
 import sys

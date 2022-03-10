@@ -1,6 +1,6 @@
 POKEMMO TRAINING BOT (testing)
 
-This bot is in its beta version and is very flawed!!
+This bot is in its beta version!!!
 
 This Bot has a dependancy on python (https://www.python.org/downloads/)
 This Bot had a dependancy on the Spheal Dark theme (https://www.mediafire.com/file/eorxfhodcj0h2m9/Spheal_Dark_Upd_22_%252B_Negro.zip/file)
@@ -19,7 +19,7 @@ if you dont know how to install Themes:
 
 INSTRUCIONS:
 
-    1- Run the "run.bat" file and minimize the console !DONT CLOSE IT!
+    1- Run the program and insert PP values leave empty to disable the move
 
     2- In pokeMMO edit the controls to ZQSD for movement and WX for A and B
 

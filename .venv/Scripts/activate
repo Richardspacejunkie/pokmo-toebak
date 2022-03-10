@@ -37,7 +37,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="C:\Users\ritse\OneDrive\Documenten\pokmo_toebak\.venv"
+VIRTUAL_ENV="D:\pokemmo-bot\.venv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"

@@ -8,7 +8,7 @@ if defined _OLD_CODEPAGE (
     "%SystemRoot%\System32\chcp.com" 65001 > nul
 )
 
-set VIRTUAL_ENV=C:\Users\ritse\OneDrive\Documenten\pokmo_toebak\.venv
+set VIRTUAL_ENV=D:\pokemmo-bot\.venv
 
 if not defined PROMPT set PROMPT=$P$G
 

@@ -20,6 +20,11 @@ import time
 import win32api, win32con
 from threading import Thread
 
+from kivy.config import Config
+
+Config.set('graphics', 'resizable', False)
+Config.write()
+
 import kivy
 from kivy.app import App
 from kivy.uix.widget import Widget
@@ -29,14 +34,12 @@ from kivy.properties import StringProperty
 from kivy.properties import DictProperty
 from kivy.lang import Builder
 from kivy.core.window import Window
-from kivy.config import Config
+
 
 print(f"\n-imported libs")
 
 #configuring kivy
 
-Config.set('graphics', 'resizable', False)
-Config.write()
 Builder.load_file("design.kv")
 
 print(f"\n-configured kivy")

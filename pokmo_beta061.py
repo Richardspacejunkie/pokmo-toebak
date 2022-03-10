@@ -59,6 +59,8 @@ class MyGridLayout(Widget):
     }
 
     print(f"\n-set vars")
+
+    #script thread object
     class Script(Thread):
 
         #win32api key values
@@ -155,8 +157,12 @@ class MyGridLayout(Widget):
             print("entered loop")
             looping = True
             while looping:
+                if MyGridLayout.active_thread == False:
+                    print("killing thread")
+                    break
                 R,G,B = pyautogui.pixel(scan_x, scan_y)
                 if self.selected_move_update() == "no pp":
+                    print("quitting no pp")
                     looping = False
                 elif R == 0 and G == 0 and B == 0:
                     print("combat mode")
@@ -170,17 +176,21 @@ class MyGridLayout(Widget):
             print("stopping")
             MyGridLayout.active_thread = False
 
-        print(f"\n-setup main function")
+        print(f"\n-setup run function")
 
-    #start function
+    print(f"\n-setup Script")
+
+    #start/threading function
 
     def start(self):
-        if self.active_thread:
+        if MyGridLayout.active_thread:
             print("Thread already running")
             print("Stoping thread")
-            #future thread kill code
+            MyGridLayout.active_thread = False
+            self.ids.start_button.background_color = 1, 1, 1, 1
+            self.ids.start_button.text = "Start"
         else:
-            self.active_thread = True
+            MyGridLayout.active_thread = True
             self.selected_move = 0
             self.attack_times = 0
             print("starting countdown")
@@ -188,6 +198,7 @@ class MyGridLayout(Widget):
             self.ids.start_button.text = "Running ... (click to stop)"
             poke_script = self.Script()
             poke_script.start()
+        print(MyGridLayout.active_thread)
 
     #object values
 
@@ -236,6 +247,7 @@ print(f"\n-setup grid layout")
 
 class PokmoApp(App):
     def build(self):
+        self.icon = "icon_logo.png"
         Window.size = (260, 330)
         return MyGridLayout()
 

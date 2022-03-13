@@ -1,0 +1,7 @@
+('d:\\pokemmo-bot\\.venv\\share\\glew\\bin',
+ None,
+ [],
+ 'DATA',
+ [('glew32.dll',
+   'd:\\pokemmo-bot\\.venv\\share\\glew\\bin\\glew32.dll',
+   'DATA')])

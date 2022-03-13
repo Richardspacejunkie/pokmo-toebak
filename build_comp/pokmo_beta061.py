@@ -189,13 +189,15 @@ class MyGridLayout(Widget):
         if MyGridLayout.active_thread:
             print("Thread already running")
             print("Stoping thread")
+            for i in self.pp_dict:
+                self.pp_dict[i] = 0
+            self.selected_move = 0
+            self.attack_times = 0
             MyGridLayout.active_thread = False
             self.ids.start_button.background_color = 1, 1, 1, 1
             self.ids.start_button.text = "Start"
         else:
             MyGridLayout.active_thread = True
-            for i in self.pp_dict:
-                self.pp_dict[i] = 0
             self.selected_move = 0
             self.attack_times = 0
             print("starting countdown")

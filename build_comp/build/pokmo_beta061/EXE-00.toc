@@ -70,7 +70,7 @@
  [],
  False,
  False,
- 1647188906,
+ 1647190834,
  [('runw.exe',
    'd:\\pokemmo-bot\\.venv\\lib\\site-packages\\PyInstaller\\bootloader\\Windows-64bit\\runw.exe',
    'EXECUTABLE')])
